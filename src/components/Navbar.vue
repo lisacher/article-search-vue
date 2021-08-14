@@ -12,7 +12,9 @@
     <nav class="nav">
       <ul class="nav-list">
         <li class="nav-item">
-          <a href="#activity" class="nav-link activity">近期活動</a>
+          <router-link to="/poll" class="nav-link activity"
+            >Poll Listing</router-link
+          >
         </li>
         <li class="nav-item">
           <a href="#album" class="nav-link">狗兒相片</a>
