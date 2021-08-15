@@ -1,48 +1,50 @@
 <template>
   <div class="container">
-    <form class="search-input">
+    <form class="search-input" @click="getResult">
       <div class="scmp d-flex">
         <input
           class="form-control"
           type="search"
+          name="q"
           placeholder="Search SCMP"
           aria-label="Search"
           v-model="textInput"
           @keyup-enter.prevent="filteredResult"
         />
-        <router-link
+        <!-- <router-link
           :to="{ name: 'search-page', query: { q: textInput, t: topicsInput } }"
-        >
-          <button class="btn" type="submit">
-            <font-awesome-icon :icon="['fas', 'search']" class="icon" />
-          </button>
-        </router-link>
+        > -->
+        <button class="btn" type="submit">
+          <font-awesome-icon :icon="['fas', 'search']" class="icon" />
+        </button>
+        <!-- </router-link> -->
       </div>
       <div class="topics-input">
         <input
           class="form-control"
           type="search"
+          name="t"
           placeholder="Topics"
           aria-label="Search"
           v-model="topicsInput"
         />
       </div>
-      <div class="result">
-        <p class="mt-2">Search Results</p>
-        <div class="topic-item d-flex justify-content-end align-items-center">
-          <p class="m-1" style="font-weight:600">Topics:</p>
-          <span
-            class="text-end m-1"
-            style="font-weight:600; color:#4169e1"
-            v-for="list in filteredTopics"
-            :key="list.id"
-          >
-            <span>{{ list }},</span><span v-if="list.length > 0"> </span>
-          </span>
+      <template v-if="keyword.trim()">
+        <div class="result">
+          <p class="mt-2">Search Results</p>
+          <div class="topic-item d-flex justify-content-end align-items-center">
+            <p class="m-1" style="font-weight:600">Topics:</p>
+            <span
+              class="text-end m-1"
+              style="font-weight:600; color:#4169e1"
+              v-for="list in filteredTopics"
+              :key="list.id"
+            >
+              <span>{{ list }},</span>
+            </span>
+          </div>
         </div>
-      </div>
-      <div class="row" v-for="item in filteredResult" :key="item.id">
-        <template v-if="filteredResult.length > 0">
+        <div class="row" v-for="item in filteredResult" :key="item.id">
           <div class="col-sm-10">
             <div class="border-top"></div>
             <div class="topics-title">
@@ -59,8 +61,8 @@
               <img :src="item.image" alt="" />
             </div>
           </div>
-        </template>
-      </div>
+        </div>
+      </template>
     </form>
   </div>
 </template>
@@ -75,10 +77,12 @@ export default {
   mixins: [exactDateFilter],
   data() {
     return {
+      keyword: "",
       textInput: "",
       topicsInput: "",
       topics: [],
       text: [],
+      showSearchResult: false,
     };
   },
   computed: {
@@ -87,7 +91,7 @@ export default {
         return item.text
           .trim()
           .toLowerCase()
-          .includes(this.textInput.trim().toLowerCase());
+          .includes(this.keyword.trim().toLowerCase());
       });
     },
     filteredTopics() {
@@ -101,8 +105,8 @@ export default {
     this.fetchTopics();
   },
   beforeRouteUpdate(to, from, next) {
-    const { q = "", t = "" } = to.query;
-    this.fetchSearchResult({ textInput: q, topicsInput: t });
+    const { q: keyword, t: topics } = to.params;
+    this.fetchSearchResult(keyword, topics);
     next();
   },
   methods: {
@@ -113,7 +117,6 @@ export default {
           t,
         });
         this.text = response.data;
-        console.log("response", response);
       } catch (error) {
         console.log("error", error);
       }
@@ -122,7 +125,6 @@ export default {
       try {
         const { data } = await searchAPI.getTopics();
         this.topics = data;
-        console.log(data);
       } catch (error) {
         console.log(error);
         Toast.fire({
@@ -130,6 +132,9 @@ export default {
           title: "無法取得Topics，請稍後再試",
         });
       }
+    },
+    getResult() {
+      this.keyword = this.textInput;
     },
   },
 };

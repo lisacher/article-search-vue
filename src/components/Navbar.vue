@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <a href="#" class="nav-brand">
+    <a href="/search" class="nav-brand">
       <div class="logo d-flex">
         <div class="logo-left"></div>
         <div class="logo-right"></div>
@@ -15,12 +15,6 @@
           <router-link to="/poll" class="nav-link activity"
             >Poll Listing</router-link
           >
-        </li>
-        <li class="nav-item">
-          <a href="#album" class="nav-link">狗兒相片</a>
-        </li>
-        <li class="nav-item">
-          <a href="#adoption" class="nav-link">領養資訊</a>
         </li>
       </ul>
     </nav>
@@ -105,7 +99,7 @@
 }
 
 .nav-link {
-  color: #267b98;
+  font-weight: bold;
 }
 
 .navbar-toggle-label {
@@ -115,6 +109,7 @@
   bottom: 0;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .hamburger {

@@ -1,9 +1,11 @@
 import moment from "moment";
 
-export const fromNowFilter = {
+export const dateFilter = {
   filters: {
-    fromNow(datetime) {
-      return datetime ? moment().format("MMMM Do YYYY, h:mm:ss a") : "-";
+    date(dateTime) {
+      moment.locale("en");
+      if (!dateTime) return "-";
+      return moment().format("D MMM YYYY");
     },
   },
 };
@@ -13,8 +15,17 @@ export const exactDateFilter = {
     exactDate(dateTime) {
       moment.locale("en");
       if (!dateTime) return "-";
-      // return moment(dateTime).format('Do M YYYY - h:mm a');
       return moment(dateTime).format("D MMM YYYY - h:mm a");
+    },
+  },
+};
+
+export const publishDateFilter = {
+  filters: {
+    publishDate(dateTime) {
+      moment.locale("en");
+      if (!dateTime) return "-";
+      return moment(dateTime).format("dddd, D MMMM YYYY, h:mm a");
     },
   },
 };

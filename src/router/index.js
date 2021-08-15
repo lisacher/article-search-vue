@@ -20,12 +20,7 @@ const routes = [
     component: () => import("../views/PollListing.vue"),
   },
   {
-    path: "/chart",
-    name: "chart",
-    component: () => import("../components/Chart.vue"),
-  },
-  {
-    path: "/poll-page",
+    path: "/poll/:id",
     name: "poll-page",
     component: () => import("../views/PollPage.vue"),
   },

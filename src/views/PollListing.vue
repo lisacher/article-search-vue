@@ -12,76 +12,63 @@
           </div>
           <div class="subtitle ms-4">
             <p>
-              Is bitcoin worth the time and money that mining requires?
-              <span class="date">17 JAN 2016</span>
+              {{ polls[0].title }}
+              <span class="date">{{ polls[0].publishedDate | date }}</span>
             </p>
           </div>
           <div class="answer ms-5">
-            <button class="btn yes">YES</button>
+            <button
+              class="btn yes"
+              @click.stop.prevent="updateYes"
+              :disabled="isVoted"
+            >
+              YES
+            </button>
             <br />
-            <button class="btn no">NO</button>
+            <button
+              class="btn no"
+              @click.stop.prevent="updateNo"
+              :disabled="isVoted"
+            >
+              NO
+            </button>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="chart-result">
-            <Chart />
+            <!-- chartJs -->
+            <div class="chart-list">
+              <div class="Chart">
+                <LineChart
+                  id="myChart"
+                  :customChartData="customChartData"
+                ></LineChart>
+                <p id="legend"></p>
+              </div>
+            </div>
           </div>
         </div>
         <div class="total-vote">
-          <p>Total number of votes recorded: 182</p>
+          <p>Total number of votes recorded: {{ polls[0].totalVotes }}</p>
         </div>
       </div>
     </div>
     <div class="con">
       <div class="poll-list">
-        <div class="col-sm-6 border-end">
+        <div
+          class="listing col-sm-6 border-bottom"
+          v-for="poll in polls"
+          :key="poll.id"
+        >
           <div class="list">
             <img src="../assets/percent.png" alt="" />
             <div class="description">
-              <span class="date">9 JAN 2019</span>
-              <router-link to="/poll-page">
+              <span class="date">{{ poll.publishedDate | date }}</span>
+              <router-link :to="{ name: 'poll-page', params: { id: poll.id } }">
                 <div class="title mb-3">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                  Rerum voluptatum sequi natus officiis unde.
+                  {{ poll.title }}
                 </div>
               </router-link>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6">
-          <div class="list">
-            <img src="../assets/percent.png" alt="" />
-            <div class="description">
-              <span class="date">9 JAN 2019</span>
-              <div class="title mb-3">
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum
-                voluptatum sequi natus officiis unde.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="poll-list">
-        <div class="col-sm-6 border-end">
-          <div class="list">
-            <img src="../assets/percent.png" alt="" />
-            <div class="description">
-              <span class="date">9 JAN 2019</span>
-              <div class="title mb-3">
-                Lorem ipsum dolor sit, amet consectetur adipisicing eli.
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="list">
-            <img src="../assets/percent.png" alt="" />
-            <div class="description">
-              <span class="date">9 JAN 2019</span>
-              <div class="title mb-3">
-                Lorem ipsum dolor sit, amet consectetur adipisicing eli.
-              </div>
             </div>
           </div>
         </div>
@@ -92,10 +79,195 @@
 
 <script>
 import Navbar from "../components/Navbar.vue";
-import Chart from "../components/Chart.vue";
+import { dateFilter } from "../utils/mixins";
+import LineChart from "../components/LineChart.vue";
+
+const dummyPolls = {
+  polls: [
+    {
+      id: 1,
+      title: "Is bitcoin worth the time and money that mining requires?",
+      publishedDate: 1516605447,
+      totalVotes: 182,
+      answer: {
+        type: "Single",
+        options: [
+          {
+            id: 1,
+            label: "Yes",
+          },
+          {
+            id: 2,
+            label: "No",
+          },
+        ],
+      },
+    },
+    {
+      id: 2,
+      title: "Should chatbots replace humans in customer service jobs?",
+      publishedDate: 1516000647,
+      totalVotes: 182,
+      answer: {
+        type: "Single",
+        options: [
+          {
+            id: 3,
+            label: "Yes",
+          },
+          {
+            id: 4,
+            label: "No",
+          },
+        ],
+      },
+    },
+    {
+      id: 3,
+      title: "How are we feeling about 2018?",
+      publishedDate: 1515568647,
+      totalVotes: 182,
+      answer: {
+        type: "Single",
+        options: [
+          {
+            id: 5,
+            label: "Hopeful",
+          },
+          {
+            id: 6,
+            label: "Doubtful",
+          },
+        ],
+      },
+    },
+    {
+      id: 4,
+      title:
+        "Which country/region have you ever visited? (Select all that applies)",
+      publishedDate: 1515482247,
+      totalVotes: 182,
+      answer: {
+        type: "Multi",
+        options: [
+          {
+            id: 7,
+            label: "Hong Kong",
+          },
+          {
+            id: 8,
+            label: "China",
+          },
+          {
+            id: 9,
+            label: "Australia",
+          },
+          {
+            id: 10,
+            label: "Thailand",
+          },
+          {
+            id: 11,
+            label: "Korea",
+          },
+          {
+            id: 12,
+            label: "Japan",
+          },
+        ],
+      },
+    },
+    {
+      id: 5,
+      title: "Will new benefits encourage you to study or work in mainland?",
+      publishedDate: 1515309447,
+      totalVotes: 182,
+      answer: {
+        type: "Single",
+        options: [
+          {
+            id: 13,
+            label: "Yes",
+          },
+          {
+            id: 14,
+            label: "No",
+          },
+        ],
+      },
+    },
+  ],
+};
+
 export default {
-  components: { Navbar, Chart },
+  mixins: [dateFilter],
+  components: { Navbar, LineChart },
   name: "PollListing",
+  data() {
+    return {
+      polls: [],
+      isVoted: false,
+      customChartData: {
+        labels: ["yes", "no"],
+        datasets: [
+          {
+            data: [13, 87],
+            borderWidth: 0,
+            backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
+          },
+        ],
+      },
+    };
+  },
+  created() {
+    this.fetchPolls();
+  },
+  methods: {
+    fetchPolls() {
+      this.polls = dummyPolls.polls;
+      this.$store.getters.getVoted(1);
+    },
+    updateNo() {
+      setTimeout(() => {
+        this.polls[0].totalVotes += 1;
+        this.polls[0].isVoted = true;
+        this.isVoted = true;
+        this.customChartData.datasets[0] = {
+          data: [13, 88],
+          borderWidth: 0,
+          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
+        };
+        this.customChartData = {
+          ...this.customChartData,
+        };
+        this.$store.commit("loadingPage", {
+          id: this.polls[0].id,
+          isVoted: this.polls[0].isVoted,
+          totalVotes: this.polls[0].totalVotes,
+        });
+      }, 500);
+    },
+    updateYes() {
+      setTimeout(() => {
+        this.polls[0].totalVotes += 1;
+        this.polls[0].isVoted = true;
+        this.isVoted = true;
+        this.customChartData.datasets[0] = {
+          data: [14, 87],
+          borderWidth: 0,
+          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
+        };
+        this.customChartData = {
+          ...this.customChartData,
+        };
+        this.$store.commit("loadingPage", {
+          id: this.polls[0].id,
+          isVoted: this.polls[0].isVoted,
+          totalVotes: this.polls[0].totalVotes,
+        });
+      }, 500);
+    },
+  },
 };
 </script>
 
@@ -138,6 +310,7 @@ export default {
 .date {
   color: #26658f;
   font-size: 14px;
+  font-weight: bold;
 }
 .chart-result {
   background-color: #ccc;
@@ -152,6 +325,7 @@ export default {
 .total-vote {
   margin-top: 30px;
   margin-left: 20px;
+  font-weight: bold;
 }
 .yes {
   background-color: #e46c2c;
@@ -176,19 +350,16 @@ img {
 }
 .poll-list {
   width: 100%;
-  justify-content: center;
+  height: 100%;
   display: flex;
-  align-items: center;
   border-bottom: 1px solid #ccc;
+  flex-wrap: wrap;
 }
 .list {
   display: flex;
   padding-top: 20px;
 }
-.total-vote {
-  margin-left: 20px;
-  font-weight: bold;
-}
+
 @media (max-width: 765px) {
   .row {
     width: 90%;
@@ -216,7 +387,6 @@ img {
   }
   .list {
     width: 100%;
-    margin-left: 20px;
     flex-direction: column;
     margin-right: 20px;
   }
@@ -229,10 +399,21 @@ img {
 @media (max-width: 575px) {
   .row {
     height: 600px;
+    margin-bottom: 80px;
   }
   .con {
     width: 100%;
     margin-left: 0%;
+  }
+  .poll-list {
+    justify-content: center;
+  }
+  .description {
+    align-self: center;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    width: 80%;
   }
 }
 </style>

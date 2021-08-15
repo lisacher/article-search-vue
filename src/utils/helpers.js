@@ -6,7 +6,6 @@ const baseURL = "http://localhost:3001";
 export const apiHelper = axios.create({
   baseURL,
 });
-
 export const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
