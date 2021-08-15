@@ -11,13 +11,13 @@
           v-model="textInput"
           @keyup-enter.prevent="filteredResult"
         />
-        <!-- <router-link
+        <router-link
           :to="{ name: 'search-page', query: { q: textInput, t: topicsInput } }"
-        > -->
-        <button class="btn" type="submit">
-          <font-awesome-icon :icon="['fas', 'search']" class="icon" />
-        </button>
-        <!-- </router-link> -->
+        >
+          <button class="btn" type="submit">
+            <font-awesome-icon :icon="['fas', 'search']" class="icon" />
+          </button>
+        </router-link>
       </div>
       <div class="topics-input">
         <input
@@ -103,11 +103,6 @@ export default {
   created() {
     this.fetchSearchResult({ q: this.textInput, t: this.topicsInput });
     this.fetchTopics();
-  },
-  beforeRouteUpdate(to, from, next) {
-    const { q: keyword, t: topics } = to.params;
-    this.fetchSearchResult(keyword, topics);
-    next();
   },
   methods: {
     async fetchSearchResult({ q, t }) {
