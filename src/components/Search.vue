@@ -1,11 +1,10 @@
 <template>
   <div class="container">
-    <form class="search-input" @click="getResult">
+    <form class="search-input" @click.prevent="getResult">
       <div class="scmp d-flex">
         <input
           class="form-control"
           type="search"
-          name="q"
           placeholder="Search SCMP"
           aria-label="Search"
           v-model="textInput"
@@ -23,27 +22,32 @@
         <input
           class="form-control"
           type="search"
-          name="t"
           placeholder="Topics"
           aria-label="Search"
           v-model="topicsInput"
         />
       </div>
-      <template v-if="keyword.trim()">
+      <template v-if="keyword">
         <div class="result">
           <p class="mt-2">Search Results</p>
-          <div class="topic-item d-flex justify-content-end align-items-center">
-            <p class="m-1" style="font-weight:600">Topics:</p>
-            <span
-              class="text-end m-1"
-              style="font-weight:600; color:#4169e1"
-              v-for="list in filteredTopics"
-              :key="list.id"
-            >
-              <span>{{ list }},</span>
-            </span>
-          </div>
         </div>
+      </template>
+      <template v-if="topicsInput">
+        <div class="topic-item d-flex justify-content-end align-items-center">
+          <p class="m-1" style="font-weight:600">Topics:</p>
+          <span
+            class="text-end m-1"
+            style="font-weight:600; color:#4169e1"
+            v-for="(list, index) in filteredTopics"
+            :key="list.id"
+          >
+            <span>{{
+              (index == filteredTopics.length - 1 && list) || list + ","
+            }}</span>
+          </span>
+        </div>
+      </template>
+      <template v-if="keyword">
         <div class="row" v-for="item in filteredResult" :key="item.id">
           <div class="col-sm-10">
             <div class="border-top"></div>
@@ -103,6 +107,7 @@ export default {
   created() {
     this.fetchSearchResult({ q: this.textInput, t: this.topicsInput });
     this.fetchTopics();
+    this.refreshPage();
   },
   methods: {
     async fetchSearchResult({ q, t }) {
@@ -128,8 +133,31 @@ export default {
         });
       }
     },
+    getTopicsComma() {
+      // add comma
+      var str = "";
+      for (var i = 0; i < this.topics.length; i++) {
+        str += this.topics[i] + ",";
+      }
+      //remove the last comma
+      if (str.length > 0) {
+        str = str.substr(0, str.length - 1);
+      }
+    },
     getResult() {
       this.keyword = this.textInput;
+    },
+    refreshPage() {
+      if (this.$route.query.q !== "") {
+        this.textInput = this.$route.query.q;
+        this.keyword = this.textInput;
+      } else if (this.$route.query.t !== "") {
+        this.topicsInput = this.$route.query.t;
+      } else {
+        this.textInput = "";
+        this.topicsInput = "";
+        this.keyword = "";
+      }
     },
   },
 };

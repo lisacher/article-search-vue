@@ -1,12 +1,12 @@
 <template>
   <div class="navbar">
-    <a href="/search" class="nav-brand">
+    <router-link to="/search" class="nav-brand">
       <div class="logo d-flex">
         <div class="logo-left"></div>
         <div class="logo-right"></div>
       </div>
 
-      South China Morning Post</a
+      South China Morning Post</router-link
     >
     <input type="checkbox" class="navbar-toggle" id="navbar-toggle" />
     <nav class="nav">

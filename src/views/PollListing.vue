@@ -81,6 +81,7 @@
 import Navbar from "../components/Navbar.vue";
 import { dateFilter } from "../utils/mixins";
 import LineChart from "../components/LineChart.vue";
+import { v4 as uuidv4 } from "uuid";
 
 const dummyPolls = {
   polls: [
@@ -206,12 +207,13 @@ export default {
   data() {
     return {
       polls: [],
+      id: uuidv4(),
       isVoted: false,
       customChartData: {
         labels: ["yes", "no"],
         datasets: [
           {
-            data: [13, 87],
+            data: [39, 148],
             borderWidth: 0,
             backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
           },
@@ -221,50 +223,59 @@ export default {
   },
   created() {
     this.fetchPolls();
+    this.polls[0] =
+      JSON.parse(localStorage.getItem(this.polls[0].id)) || this.polls[0];
+    this.isVoted = JSON.parse(localStorage.getItem("isVoted")) || false;
+    this.customChartData.datasets[0].data =
+      JSON.parse(localStorage.getItem(this.id)) ||
+      this.customChartData.datasets[0].data;
   },
   methods: {
     fetchPolls() {
       this.polls = dummyPolls.polls;
-      this.$store.getters.getVoted(1);
     },
     updateNo() {
       setTimeout(() => {
-        this.polls[0].totalVotes += 1;
-        this.polls[0].isVoted = true;
         this.isVoted = true;
-        this.customChartData.datasets[0] = {
-          data: [13, 88],
-          borderWidth: 0,
-          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
-        };
-        this.customChartData = {
-          ...this.customChartData,
-        };
-        this.$store.commit("loadingPage", {
+        this.customChartData.datasets[0].data = [39, 149];
+        localStorage.setItem("isVoted", JSON.stringify(this.isVoted));
+
+        //set polls data in localStorage
+        let data = {
           id: this.polls[0].id,
-          isVoted: this.polls[0].isVoted,
-          totalVotes: this.polls[0].totalVotes,
-        });
+          totalVotes: (this.polls[0].totalVotes += 1),
+          title: this.polls[0].title,
+          publishedDate: this.polls[0].publishedDate,
+        };
+        localStorage.setItem(this.polls[0].id, JSON.stringify(data));
+
+        //set chart data in localStorage
+        localStorage.setItem(
+          this.id,
+          JSON.stringify(this.customChartData.datasets[0].data)
+        );
       }, 500);
     },
     updateYes() {
       setTimeout(() => {
-        this.polls[0].totalVotes += 1;
-        this.polls[0].isVoted = true;
         this.isVoted = true;
-        this.customChartData.datasets[0] = {
-          data: [14, 87],
-          borderWidth: 0,
-          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
-        };
-        this.customChartData = {
-          ...this.customChartData,
-        };
-        this.$store.commit("loadingPage", {
+        this.customChartData.datasets[0].data = [40, 148];
+        localStorage.setItem("isVoted", JSON.stringify(this.isVoted));
+
+        //set polls data in localStorage
+        let data = {
           id: this.polls[0].id,
-          isVoted: this.polls[0].isVoted,
-          totalVotes: this.polls[0].totalVotes,
-        });
+          totalVotes: (this.polls[0].totalVotes += 1),
+          title: this.polls[0].title,
+          publishedDate: this.polls[0].publishedDate,
+        };
+        localStorage.setItem(this.polls[0].id, JSON.stringify(data));
+
+        //set chart data in localStorage
+        localStorage.setItem(
+          this.id,
+          JSON.stringify(this.customChartData.datasets[0].data)
+        );
       }, 500);
     },
   },

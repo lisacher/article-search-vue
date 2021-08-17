@@ -16,7 +16,7 @@
           <button
             class="btn yes"
             @click.stop.prevent="updateYes"
-            :disabled="isVoted"
+            :disabled="singlePoll.isVoted"
           >
             YES
           </button>
@@ -24,7 +24,7 @@
           <button
             class="btn no"
             @click.stop.prevent="updateNo"
-            :disabled="isVoted"
+            :disabled="singlePoll.isVoted"
           >
             NO
           </button>
@@ -55,6 +55,8 @@
 import Navbar from "../components/Navbar.vue";
 import { publishDateFilter } from "../utils/mixins";
 import LineChart from "../components/LineChart.vue";
+import { v4 as uuidv4 } from "uuid";
+import { Toast } from "./../utils/helpers";
 
 const dummyPolls = {
   polls: [
@@ -183,13 +185,14 @@ export default {
         publishedDate: "",
         title: "",
         totalVotes: "",
+        isVoted: false,
       },
-      isVoted: false,
+      id: uuidv4(),
       customChartData: {
         labels: ["yes", "no"],
         datasets: [
           {
-            data: [13, 87],
+            data: [39, 148],
             borderWidth: 0,
             backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
           },
@@ -200,6 +203,11 @@ export default {
   created() {
     const { id: pollId } = this.$route.params;
     this.fetchPolls(pollId);
+    this.singlePoll =
+      JSON.parse(localStorage.getItem(this.singlePoll.id)) || this.singlePoll;
+    this.customChartData.datasets[0].data =
+      JSON.parse(localStorage.getItem(this.id)) ||
+      this.customChartData.datasets[0].data;
   },
   beforeRouteUpdate(to, from, next) {
     const { id: pollId } = to.params;
@@ -214,35 +222,56 @@ export default {
         ...this.singlePoll,
         ...res,
       };
-      console.log(res);
-      console.log(pollId);
     },
     updateNo() {
       setTimeout(() => {
-        this.singlePoll.totalVotes += 1;
-        this.isVoted = true;
-        this.customChartData.datasets[0] = {
-          data: [13, 88],
-          borderWidth: 0,
-          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
+        this.customChartData.datasets[0].data = [39, 149];
+
+        //set polls data in localStorage
+        let data = {
+          id: this.singlePoll.id,
+          totalVotes: (this.singlePoll.totalVotes += 1),
+          title: this.singlePoll.title,
+          publishedDate: this.singlePoll.publishedDate,
+          isVoted: (this.singlePoll.isVoted = true),
         };
-        this.customChartData = {
-          ...this.customChartData,
-        };
+        localStorage.setItem(this.singlePoll.id, JSON.stringify(data));
+
+        //set chart data in localStorage
+        localStorage.setItem(
+          this.id,
+          JSON.stringify(this.customChartData.datasets[0].data)
+        );
+
+        Toast.fire({
+          icon: "success",
+          title: "Vote success! ",
+        });
       }, 500);
     },
     updateYes() {
       setTimeout(() => {
-        this.singlePoll.totalVotes += 1;
-        this.isVoted = true;
-        this.customChartData.datasets[0] = {
-          data: [14, 87],
-          borderWidth: 0,
-          backgroundColor: ["#e46c2c", "rgb(19, 43, 89)"],
+        this.customChartData.datasets[0].data = [40, 148];
+
+        //set polls data in localStorage
+        let data = {
+          id: this.singlePoll.id,
+          totalVotes: (this.singlePoll.totalVotes += 1),
+          title: this.singlePoll.title,
+          publishedDate: this.singlePoll.publishedDate,
+          isVoted: (this.singlePoll.isVoted = true),
         };
-        this.customChartData = {
-          ...this.customChartData,
-        };
+        localStorage.setItem(this.singlePoll.id, JSON.stringify(data));
+
+        //set chart data in localStorage
+        localStorage.setItem(
+          this.id,
+          JSON.stringify(this.customChartData.datasets[0].data)
+        );
+        Toast.fire({
+          icon: "success",
+          title: "Vote success! ",
+        });
       }, 500);
     },
   },
