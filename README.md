@@ -1,6 +1,8 @@
 # article-search-vue
 
-## ![Alt text](view1.jpeg)
+## ![Alt text](view1.png)
+
+專案網址：https://daisy821.me/article-search-vue
 
 ### 8/17 新增功能：
 
